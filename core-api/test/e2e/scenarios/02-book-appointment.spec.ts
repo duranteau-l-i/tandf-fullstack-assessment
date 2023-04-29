@@ -37,7 +37,7 @@ describe("Book appointment scenario", () => {
     if (doctors.body.data.doctors.length) {
       const availablitiesToAdd = createAvailability(
         doctors.body.data.doctors[0],
-        1
+        2
       );
 
       for await (const availablityToAdd of availablitiesToAdd) {

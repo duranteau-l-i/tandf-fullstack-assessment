@@ -5,7 +5,7 @@ import { AddAvailabilityInput } from "@/models/doctor/AddAvailabilityInput";
 import { AddDoctorInput } from "@/models/doctor/AddDoctorInput";
 import { NotImplementedException } from "@/models/errors/NotImplementedException";
 import { Service } from "typedi";
-import { Repository } from "typeorm";
+import { Between, Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 @Service()
@@ -59,8 +59,10 @@ export class DoctorService {
     try {
       const availabiliies = await this.availabilityRepo.find({
         where: {
-          startTimeUtc: from.toUTCString(),
-          endTimeUtc: to.toUTCString()
+          startTimeUtc: Between(
+            from.toUTCString(),
+            this.removeMinutes(to, 15).toUTCString()
+          )
         },
         relations: ["doctor"]
       });
@@ -78,5 +80,9 @@ export class DoctorService {
     } catch (error) {
       throw error;
     }
+  }
+
+  private removeMinutes(date: Date, minutes: number) {
+    return new Date(date.getTime() - minutes * 60000);
   }
 }

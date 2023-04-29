@@ -30,8 +30,8 @@ const mockRepo: Partial<Repository<Doctor>> = {
       return Promise.resolve(
         mockDB.availabilities.filter(
           el =>
-            el.startTimeUtc === props?.where?.startTimeUtc &&
-            el.endTimeUtc === props?.where?.endTimeUtc
+            el.startTimeUtc >= props.where.startTimeUtc.value[0] &&
+            el.startTimeUtc <= props.where.startTimeUtc.value[1]
         ) as Availability[]
       );
     }
@@ -131,8 +131,8 @@ describe("DoctorService", () => {
       doctor2.id = 2;
       doctor2.name = "doctor 2";
 
-      const availabilitiesData = createAvailability(doctor, 1);
-      const availabilitiesData2 = createAvailability(doctor2, 1);
+      const availabilitiesData = createAvailability(doctor, 2);
+      const availabilitiesData2 = createAvailability(doctor2, 2);
 
       mockDB.seedDoctors([doctor, doctor2]);
       mockDB.seedAvailabilities([
@@ -171,8 +171,8 @@ describe("DoctorService", () => {
       doctor2.id = 2;
       doctor2.name = "doctor 2";
 
-      const availabilitiesData = createAvailability(doctor, 1);
-      const availabilitiesData2 = createAvailability(doctor2, 1, false);
+      const availabilitiesData = createAvailability(doctor, 2);
+      const availabilitiesData2 = createAvailability(doctor2, 2, false);
 
       mockDB.seedDoctors([doctor, doctor2]);
       mockDB.seedAvailabilities([
@@ -181,7 +181,7 @@ describe("DoctorService", () => {
       ]);
 
       const from = new Date(1, 4, 2023, 14, 0, 0);
-      const to = new Date(1, 4, 2023, 14, 15, 0);
+      const to = new Date(1, 4, 2023, 15, 0, 0);
 
       // ACT
       const availabilities = await doctorService.getAvailableSlots(from, to);
@@ -192,6 +192,21 @@ describe("DoctorService", () => {
           doctorId: 1,
           end: new Date("1906-11-13T14:15:00.000Z"),
           start: new Date("1906-11-13T14:00:00.000Z")
+        },
+        {
+          doctorId: 1,
+          end: new Date("1906-11-13T14:30:00.000Z"),
+          start: new Date("1906-11-13T14:15:00.000Z")
+        },
+        {
+          doctorId: 1,
+          end: new Date("1906-11-13T14:45:00.000Z"),
+          start: new Date("1906-11-13T14:30:00.000Z")
+        },
+        {
+          doctorId: 1,
+          end: new Date("1906-11-13T15:00:00.000Z"),
+          start: new Date("1906-11-13T14:45:00.000Z")
         }
       ]);
     });
