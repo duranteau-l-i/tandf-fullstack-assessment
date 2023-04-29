@@ -44,8 +44,8 @@ export class DoctorService {
 
       const availabilityData = await this.availabilityRepo.save({
         dayOfWeek: availability.dayOfWeek,
-        startTimeUtc: availability.startTimeUtc.toUTCString(),
-        endTimeUtc: availability.endTimeUtc.toUTCString(),
+        startTimeUtc: availability.startTimeUtc,
+        endTimeUtc: availability.endTimeUtc,
         doctor: doctor
       });
 
@@ -59,13 +59,13 @@ export class DoctorService {
     try {
       const availabiliies = await this.availabilityRepo.find({
         where: {
-          startTimeUtc: Between(
-            from.toUTCString(),
-            this.removeMinutes(to, 15).toUTCString()
-          )
+          startTimeUtc: Between(from, this.removeMinutes(to, 15))
         },
         relations: ["doctor"]
       });
+      // console.log(await this.availabilityRepo.find());
+      // console.log(from, to);
+      // console.log(availabiliies);
 
       const slots = availabiliies.map(availability => {
         const slot = new Slot();

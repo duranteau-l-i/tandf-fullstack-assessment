@@ -21,7 +21,7 @@ export class Appointment extends BaseEntity {
   doctor: Doctor;
 
   @Field()
-  @CreateDateColumn()
+  @Column()
   startTime: Date;
 
   @Field()

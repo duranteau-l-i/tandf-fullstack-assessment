@@ -50,7 +50,7 @@ export class AppointmentService {
         });
 
         await this.availabilityRepo.delete({
-          startTimeUtc: options?.slot?.start?.toUTCString(),
+          startTimeUtc: options?.slot?.start,
           doctor: { id: options?.slot?.doctorId }
         });
 
@@ -61,6 +61,7 @@ export class AppointmentService {
           relations: ["doctor"]
         });
 
+        console.log(appointmentData);
         return appointmentData;
       }
 

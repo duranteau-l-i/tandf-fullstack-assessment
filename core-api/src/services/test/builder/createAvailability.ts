@@ -48,10 +48,10 @@ const makeAvailabilities = (
   dayOfWeek: number,
   doctor: Doctor
 ): { availability: Availability; date: Date } => {
-  const startTimeUtc = date.toUTCString();
+  const startTimeUtc = date;
 
   const endTime = addMinutes(date, 15);
-  const endTimeUtc = endTime.toUTCString();
+  const endTimeUtc = endTime;
 
   const availability = new Availability();
   availability.dayOfWeek = dayOfWeek;

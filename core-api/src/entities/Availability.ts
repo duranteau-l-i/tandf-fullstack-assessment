@@ -21,11 +21,11 @@ export class Availability extends BaseEntity {
 
   @Field()
   @Column()
-  startTimeUtc: string;
+  startTimeUtc: Date;
 
   @Field()
   @Column()
-  endTimeUtc: string;
+  endTimeUtc: Date;
 
   @ManyToOne(() => Doctor, doctor => doctor.availability)
   doctor: Doctor;

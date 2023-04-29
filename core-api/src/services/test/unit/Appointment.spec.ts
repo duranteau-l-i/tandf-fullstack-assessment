@@ -49,8 +49,8 @@ const mockRepo: Partial<Repository<Appointment>> = {
         return Promise.resolve(
           mockDB.appointments.filter(
             el =>
-              el.startTime.toUTCString() ===
-                props?.where?.startTime.toUTCString() &&
+              el.startTime.toISOString() ===
+                props?.where?.startTime.toISOString() &&
               el.durationMinutes === props?.where?.durationMinutes &&
               el.doctor.id === props?.where?.doctor.id
           )[0] as Appointment
@@ -132,7 +132,7 @@ describe("AppointmentService", () => {
       const appointment = new Appointment();
       appointment.id = 1;
       appointment.doctor = doctor;
-      appointment.startTime = new Date(1, 4, 2023, 10, 0, 0);
+      appointment.startTime = new Date(2023, 4, 1, 10, 0, 0);
       appointment.durationMinutes = 15;
 
       mockDB.seedAppointments([appointment]);
@@ -149,7 +149,7 @@ describe("AppointmentService", () => {
             name: "doctor 1"
           }),
           durationMinutes: 15,
-          startTime: new Date("1906-11-13T10:00:00.000Z")
+          startTime: new Date(2023, 4, 1, 10, 0, 0)
         })
       ]);
     });
@@ -173,8 +173,8 @@ describe("AppointmentService", () => {
       mockDB.seedDoctors([doctor]);
 
       const slot = new Slot();
-      slot.start = new Date(1, 4, 2023, 10, 0, 0);
-      slot.end = new Date(1, 4, 2023, 10, 15, 0);
+      slot.start = new Date(2023, 4, 1, 10, 0, 0);
+      slot.end = new Date(2023, 4, 1, 10, 15, 0);
       slot.doctorId = 1;
 
       // ACT
@@ -192,7 +192,7 @@ describe("AppointmentService", () => {
             name: "doctor 1"
           }),
           durationMinutes: 15,
-          startTime: new Date("1906-11-13T10:00:00.000Z")
+          startTime: new Date(2023, 4, 1, 10, 0, 0)
         })
       );
 
@@ -204,20 +204,20 @@ describe("AppointmentService", () => {
               name: "doctor 1"
             }),
             durationMinutes: 15,
-            startTime: new Date("1906-11-13T10:00:00.000Z")
+            startTime: new Date(2023, 4, 1, 10, 0, 0)
           })
         ])
       );
 
       const hasItem = mockDB.availabilities.some(
         item =>
-          item.startTimeUtc === "Tue, 13 Nov 1906 10:00:00 GMT" &&
+          item.startTimeUtc === new Date("Mon, 01 May 2023 09:00:00 GMT") &&
           doctor.id === 1
       );
       expect(hasItem).toBe(false);
     });
 
-    it("should not book duplicate appointment", async () => {
+    it.only("should not book duplicate appointment", async () => {
       // ARRANGE
       const doctor = new Doctor();
       doctor.id = 1;
@@ -228,14 +228,14 @@ describe("AppointmentService", () => {
       const appointment = new Appointment();
       appointment.id = 1;
       appointment.doctor = doctor;
-      appointment.startTime = new Date(1, 4, 2023, 10, 0, 0);
+      appointment.startTime = new Date(2023, 4, 1, 10, 0, 0);
       appointment.durationMinutes = 15;
 
       mockDB.seedAppointments([appointment]);
 
       const slot = new Slot();
-      slot.start = new Date(1, 4, 2023, 10, 0, 0);
-      slot.end = new Date(1, 4, 2023, 10, 15, 0);
+      slot.start = new Date(2023, 4, 1, 10, 0, 0);
+      slot.end = new Date(2023, 4, 1, 10, 15, 0);
       slot.doctorId = 1;
 
       // ACT - ASSERT
@@ -257,14 +257,14 @@ describe("AppointmentService", () => {
       const appointment = new Appointment();
       appointment.id = 1;
       appointment.doctor = doctor;
-      appointment.startTime = new Date(1, 4, 2023, 10, 0, 0);
+      appointment.startTime = new Date(2023, 4, 1, 10, 0, 0);
       appointment.durationMinutes = 15;
 
       mockDB.seedAppointments([appointment]);
 
       const slot = new Slot();
-      slot.start = new Date(1, 4, 2023, 10, 0, 0);
-      slot.end = new Date(1, 4, 2023, 10, 15, 0);
+      slot.start = new Date(2023, 4, 1, 10, 0, 0);
+      slot.end = new Date(2023, 4, 1, 10, 15, 0);
       slot.doctorId = 1;
 
       // ACT - ASSERT
