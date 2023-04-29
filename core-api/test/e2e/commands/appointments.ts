@@ -5,12 +5,12 @@ import { Api } from "../api";
 
 export const bookAppointment = (
   api: Api,
-  bookAppointmentInput: BookAppointmentInput
+  bookAppointment: BookAppointmentInput
 ): supertest.Test =>
   api.post("").send({
     query: `
-    mutation ($bookAppointmentInput: BookAppointmentInput!) {
-      bookAppointment(bookAppointmentInput: $bookAppointmentInput) {
+    mutation ($bookAppointment: BookAppointmentInput!) {
+      bookAppointment(bookAppointmentInput: $bookAppointment) {
         id
         startTime
         durationMinutes,
@@ -21,6 +21,6 @@ export const bookAppointment = (
     }
 `,
     variables: {
-      bookAppointmentInput
+      bookAppointment
     }
   });

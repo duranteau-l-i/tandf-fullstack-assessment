@@ -2,9 +2,15 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -58,19 +64,16 @@ export type Mutation = {
   bookAppointment: Appointment;
 };
 
-
 export type MutationAddDoctorArgs = {
   doctor: AddDoctorInput;
 };
-
 
 export type MutationAddItemArgs = {
   item: AddItemInput;
 };
 
-
 export type MutationBookAppointmentArgs = {
-  bookAppointmentInput: BookAppointmentInput;
+  bookAppointment: BookAppointmentInput;
 };
 
 export type Query = {
@@ -80,7 +83,6 @@ export type Query = {
   items: Array<Item>;
   slots: Array<Slot>;
 };
-
 
 export type QuerySlotsArgs = {
   from: Scalars['DateTime'];
@@ -100,34 +102,112 @@ export type SlotInput = {
   start: Scalars['DateTime'];
 };
 
+export type GetSlotInput = {
+  from: Scalars['DateTime'];
+  to: Scalars['DateTime'];
+};
+
 export type AddItemMutationVariables = Exact<{
   item: AddItemInput;
 }>;
 
+export type AddItemMutation = {
+  __typename?: 'Mutation';
+  addItem: {
+    __typename?: 'Item';
+    id: number;
+    name: string;
+    description?: string | null;
+  };
+};
 
-export type AddItemMutation = { __typename?: 'Mutation', addItem: { __typename?: 'Item', id: number, name: string, description?: string | null } };
+export type BookAppointmentMutationVariables = Exact<{
+  bookAppointment: BookAppointmentInput;
+}>;
 
-export type DoctorsQueryVariables = Exact<{ [key: string]: never; }>;
+export type BookAppointmentMutation = {
+  __typename?: 'Mutation';
+  bookAppointment: {
+    __typename?: 'Appointment';
+    patientName: string;
+    description: string;
+    slot: Slot;
+  };
+};
 
+export const BookAppointmentDocument = gql`
+  mutation bookAppointment($bookAppointment: BookAppointmentInput!) {
+    bookAppointment(bookAppointmentInput: $bookAppointment) {
+      id
+      startTime
+      durationMinutes
+      doctor {
+        id
+      }
+    }
+  }
+`;
 
-export type DoctorsQuery = { __typename?: 'Query', doctors: Array<{ __typename?: 'Doctor', id: number, name: string }> };
+export type BookAppointmentMutationFn = Apollo.MutationFunction<
+  BookAppointmentMutation,
+  BookAppointmentMutationVariables
+>;
 
-export type ItemsQueryVariables = Exact<{ [key: string]: never; }>;
+export type DoctorsQueryVariables = Exact<{ [key: string]: never }>;
 
+export type DoctorsQuery = {
+  __typename?: 'Query';
+  doctors: Array<{ __typename?: 'Doctor'; id: number; name: string }>;
+};
 
-export type ItemsQuery = { __typename?: 'Query', items: Array<{ __typename?: 'Item', id: number, name: string, description?: string | null }> };
+// export type SlotsQueryVariables = Exact<{ [key: string]: never }>;
+export type SlotsQueryVariables = GetSlotInput;
 
+export type SlotsQuery = {
+  __typename?: 'Query';
+  slots: Array<{
+    __typename?: 'Slot';
+    doctorId: number;
+    start: Date;
+    end: Date;
+  }>;
+};
+
+export const GetSlotDocument = gql`
+  query slots($from: DateTime!, $to: DateTime!) {
+    slots(from: $from, to: $to) {
+      doctorId
+      start
+      end
+    }
+  }
+`;
+
+export type ItemsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ItemsQuery = {
+  __typename?: 'Query';
+  items: Array<{
+    __typename?: 'Item';
+    id: number;
+    name: string;
+    description?: string | null;
+  }>;
+};
 
 export const AddItemDocument = gql`
-    mutation addItem($item: AddItemInput!) {
-  addItem(item: $item) {
-    id
-    name
-    description
+  mutation addItem($item: AddItemInput!) {
+    addItem(item: $item) {
+      id
+      name
+      description
+    }
   }
-}
-    `;
-export type AddItemMutationFn = Apollo.MutationFunction<AddItemMutation, AddItemMutationVariables>;
+`;
+export type AddItemMutationFn = Apollo.MutationFunction<
+  AddItemMutation,
+  AddItemMutationVariables
+>;
 
 /**
  * __useAddItemMutation__
@@ -146,21 +226,32 @@ export type AddItemMutationFn = Apollo.MutationFunction<AddItemMutation, AddItem
  *   },
  * });
  */
-export function useAddItemMutation(baseOptions?: Apollo.MutationHookOptions<AddItemMutation, AddItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddItemMutation, AddItemMutationVariables>(AddItemDocument, options);
-      }
+export function useAddItemMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddItemMutation,
+    AddItemMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<AddItemMutation, AddItemMutationVariables>(
+    AddItemDocument,
+    options
+  );
+}
 export type AddItemMutationHookResult = ReturnType<typeof useAddItemMutation>;
 export type AddItemMutationResult = Apollo.MutationResult<AddItemMutation>;
-export type AddItemMutationOptions = Apollo.BaseMutationOptions<AddItemMutation, AddItemMutationVariables>;
+export type AddItemMutationOptions = Apollo.BaseMutationOptions<
+  AddItemMutation,
+  AddItemMutationVariables
+>;
 export const DoctorsDocument = gql`
-    query doctors {
-  doctors {
-    id
-    name
+  query doctors {
+    doctors {
+      id
+      name
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useDoctorsQuery__
@@ -177,26 +268,39 @@ export const DoctorsDocument = gql`
  *   },
  * });
  */
-export function useDoctorsQuery(baseOptions?: Apollo.QueryHookOptions<DoctorsQuery, DoctorsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DoctorsQuery, DoctorsQueryVariables>(DoctorsDocument, options);
-      }
-export function useDoctorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DoctorsQuery, DoctorsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DoctorsQuery, DoctorsQueryVariables>(DoctorsDocument, options);
-        }
+export function useDoctorsQuery(
+  baseOptions?: Apollo.QueryHookOptions<DoctorsQuery, DoctorsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<DoctorsQuery, DoctorsQueryVariables>(
+    DoctorsDocument,
+    options
+  );
+}
+export function useDoctorsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<DoctorsQuery, DoctorsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<DoctorsQuery, DoctorsQueryVariables>(
+    DoctorsDocument,
+    options
+  );
+}
 export type DoctorsQueryHookResult = ReturnType<typeof useDoctorsQuery>;
 export type DoctorsLazyQueryHookResult = ReturnType<typeof useDoctorsLazyQuery>;
-export type DoctorsQueryResult = Apollo.QueryResult<DoctorsQuery, DoctorsQueryVariables>;
+export type DoctorsQueryResult = Apollo.QueryResult<
+  DoctorsQuery,
+  DoctorsQueryVariables
+>;
 export const ItemsDocument = gql`
-    query items {
-  items {
-    id
-    name
-    description
+  query items {
+    items {
+      id
+      name
+      description
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useItemsQuery__
@@ -213,14 +317,115 @@ export const ItemsDocument = gql`
  *   },
  * });
  */
-export function useItemsQuery(baseOptions?: Apollo.QueryHookOptions<ItemsQuery, ItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ItemsQuery, ItemsQueryVariables>(ItemsDocument, options);
-      }
-export function useItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemsQuery, ItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ItemsQuery, ItemsQueryVariables>(ItemsDocument, options);
-        }
+export function useItemsQuery(
+  baseOptions?: Apollo.QueryHookOptions<ItemsQuery, ItemsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ItemsQuery, ItemsQueryVariables>(
+    ItemsDocument,
+    options
+  );
+}
+export function useItemsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ItemsQuery, ItemsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ItemsQuery, ItemsQueryVariables>(
+    ItemsDocument,
+    options
+  );
+}
 export type ItemsQueryHookResult = ReturnType<typeof useItemsQuery>;
 export type ItemsLazyQueryHookResult = ReturnType<typeof useItemsLazyQuery>;
-export type ItemsQueryResult = Apollo.QueryResult<ItemsQuery, ItemsQueryVariables>;
+export type ItemsQueryResult = Apollo.QueryResult<
+  ItemsQuery,
+  ItemsQueryVariables
+>;
+
+/**
+ * __useDoctorsQuery__
+ *
+ * To run a query within a React component, call `useDoctorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDoctorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDoctorsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSlotsQuery(
+  baseOptions?: Apollo.QueryHookOptions<SlotsQuery, SlotsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SlotsQuery, SlotsQueryVariables>(
+    GetSlotDocument,
+    options
+  );
+}
+export function useSlotsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SlotsQuery, SlotsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SlotsQuery, SlotsQueryVariables>(
+    SlotsDocument,
+    options
+  );
+}
+export type SlotsQueryHookResult = ReturnType<typeof useSlotsQuery>;
+export type SlotsLazyQueryHookResult = ReturnType<typeof useSlotsLazyQuery>;
+export type SlotsQueryResult = Apollo.QueryResult<
+  SlotsQuery,
+  SlotsQueryVariables
+>;
+export const SlotsDocument = gql`
+  query slots {
+    slots {
+      doctorId
+      start
+      end
+    }
+  }
+`;
+
+/**
+ * __useAddItemMutation__
+ *
+ * To run a mutation, you first call `useAddItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addItemMutation, { data, loading, error }] = useAddItemMutation({
+ *   variables: {
+ *      item: // value for 'item'
+ *   },
+ * });
+ */
+export function useBookAppointmentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BookAppointmentMutation,
+    BookAppointmentMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    BookAppointmentMutation,
+    BookAppointmentMutationVariables
+  >(BookAppointmentDocument, options);
+}
+export type BookAppointmentMutationHookResult = ReturnType<
+  typeof useBookAppointmentMutation
+>;
+export type BookAppointmentMutationResult =
+  Apollo.MutationResult<BookAppointmentMutation>;
+export type BookAppointmentMutationOptions = Apollo.BaseMutationOptions<
+  BookAppointmentMutation,
+  BookAppointmentMutationVariables
+>;

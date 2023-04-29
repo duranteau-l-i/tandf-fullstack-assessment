@@ -11,7 +11,7 @@ const DoctorSelector: FC<{
 }> = ({ doctors, value, onChange }) => {
   return (
     <Box>
-      <Heading as='h2' fontSize='x-large'>
+      <Heading as='h2' fontSize='x-large' onClick={() => onChange(undefined)}>
         Doctors
       </Heading>
       {value && <Text>Selected: {value.name}</Text>}

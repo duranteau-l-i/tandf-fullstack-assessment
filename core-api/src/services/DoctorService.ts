@@ -63,9 +63,6 @@ export class DoctorService {
         },
         relations: ["doctor"]
       });
-      // console.log(await this.availabilityRepo.find());
-      // console.log(from, to);
-      // console.log(availabiliies);
 
       const slots = availabiliies.map(availability => {
         const slot = new Slot();
