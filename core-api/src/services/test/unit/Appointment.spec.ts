@@ -162,7 +162,12 @@ describe("AppointmentService", () => {
       doctor.id = 1;
       doctor.name = "doctor 1";
 
-      const availabilitiesData = createAvailability(doctor, 2);
+      const availabilitiesData = createAvailability(
+        doctor,
+        2,
+        new Date(2023, 4, 1, 9, 0, 0),
+        new Date(2023, 4, 1, 15, 0, 0)
+      );
 
       mockDB.seedAvailabilities(availabilitiesData);
       mockDB.seedDoctors([doctor]);

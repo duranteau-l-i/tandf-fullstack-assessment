@@ -131,8 +131,18 @@ describe("DoctorService", () => {
       doctor2.id = 2;
       doctor2.name = "doctor 2";
 
-      const availabilitiesData = createAvailability(doctor, 2);
-      const availabilitiesData2 = createAvailability(doctor2, 2);
+      const availabilitiesData = createAvailability(
+        doctor,
+        2,
+        new Date(2023, 4, 1, 9, 0, 0),
+        new Date(2023, 4, 1, 15, 0, 0)
+      );
+      const availabilitiesData2 = createAvailability(
+        doctor2,
+        2,
+        new Date(2023, 4, 1, 9, 0, 0),
+        new Date(2023, 4, 1, 15, 0, 0)
+      );
 
       mockDB.seedDoctors([doctor, doctor2]);
       mockDB.seedAvailabilities([
@@ -140,8 +150,8 @@ describe("DoctorService", () => {
         ...availabilitiesData2
       ]);
 
-      const from = new Date(1, 4, 2023, 14, 0, 0);
-      const to = new Date(1, 4, 2023, 14, 15, 0);
+      const from = new Date(2023, 4, 1, 15, 0, 0);
+      const to = new Date(2023, 4, 1, 15, 15, 0);
 
       // ACT
       const availabilities = await doctorService.getAvailableSlots(from, to);
@@ -150,13 +160,13 @@ describe("DoctorService", () => {
       expect(availabilities).toEqual([
         {
           doctorId: 1,
-          end: new Date("1906-11-13T14:15:00.000Z"),
-          start: new Date("1906-11-13T14:00:00.000Z")
+          end: new Date("2023-05-01T14:15:00.000Z"),
+          start: new Date("2023-05-01T14:00:00.000Z")
         },
         {
           doctorId: 2,
-          end: new Date("1906-11-13T14:15:00.000Z"),
-          start: new Date("1906-11-13T14:00:00.000Z")
+          end: new Date("2023-05-01T14:15:00.000Z"),
+          start: new Date("2023-05-01T14:00:00.000Z")
         }
       ]);
     });
@@ -171,8 +181,17 @@ describe("DoctorService", () => {
       doctor2.id = 2;
       doctor2.name = "doctor 2";
 
-      const availabilitiesData = createAvailability(doctor, 2);
-      const availabilitiesData2 = createAvailability(doctor2, 2, false);
+      const availabilitiesData = createAvailability(
+        doctor,
+        2,
+        new Date(2023, 4, 1, 9, 0, 0),
+        new Date(2023, 4, 1, 15, 0, 0)
+      );
+      const availabilitiesData2 = createAvailability(
+        doctor2,
+        2,
+        new Date(2023, 4, 1, 9, 0, 0)
+      );
 
       mockDB.seedDoctors([doctor, doctor2]);
       mockDB.seedAvailabilities([
@@ -180,8 +199,8 @@ describe("DoctorService", () => {
         ...availabilitiesData2
       ]);
 
-      const from = new Date(1, 4, 2023, 14, 0, 0);
-      const to = new Date(1, 4, 2023, 15, 0, 0);
+      const from = new Date(2023, 4, 1, 15, 0, 0);
+      const to = new Date(2023, 4, 1, 16, 0, 0);
 
       // ACT
       const availabilities = await doctorService.getAvailableSlots(from, to);
@@ -190,23 +209,23 @@ describe("DoctorService", () => {
       expect(availabilities).toEqual([
         {
           doctorId: 1,
-          end: new Date("1906-11-13T14:15:00.000Z"),
-          start: new Date("1906-11-13T14:00:00.000Z")
+          end: new Date("2023-05-01T14:15:00.000Z"),
+          start: new Date("2023-05-01T14:00:00.000Z")
         },
         {
           doctorId: 1,
-          end: new Date("1906-11-13T14:30:00.000Z"),
-          start: new Date("1906-11-13T14:15:00.000Z")
+          end: new Date("2023-05-01T14:30:00.000Z"),
+          start: new Date("2023-05-01T14:15:00.000Z")
         },
         {
           doctorId: 1,
-          end: new Date("1906-11-13T14:45:00.000Z"),
-          start: new Date("1906-11-13T14:30:00.000Z")
+          end: new Date("2023-05-01T14:45:00.000Z"),
+          start: new Date("2023-05-01T14:30:00.000Z")
         },
         {
           doctorId: 1,
-          end: new Date("1906-11-13T15:00:00.000Z"),
-          start: new Date("1906-11-13T14:45:00.000Z")
+          end: new Date("2023-05-01T15:00:00.000Z"),
+          start: new Date("2023-05-01T14:45:00.000Z")
         }
       ]);
     });
@@ -223,8 +242,8 @@ describe("DoctorService", () => {
 
       mockDB.seedDoctors([doctor, doctor2]);
 
-      const from = new Date(1, 4, 2023, 14, 0, 0);
-      const to = new Date(1, 4, 2023, 14, 15, 0);
+      const from = new Date(2023, 4, 1, 15, 0, 0);
+      const to = new Date(2023, 4, 1, 15, 15, 0);
 
       // ACT
       const availabilities = await doctorService.getAvailableSlots(from, to);

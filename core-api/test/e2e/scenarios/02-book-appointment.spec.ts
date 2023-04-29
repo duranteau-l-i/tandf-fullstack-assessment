@@ -19,45 +19,51 @@ import { createAvailability } from "@/services/test/builder/createAvailability";
 const api = createApi();
 
 describe("Book appointment scenario", () => {
-  it("addDoctors: should add doctors successfully", async () => {
-    const doctoToAdd = { name: "Doctor" };
+  describe.skip("Unskip to genaate doctor and availabilities", () => {
+    it("addDoctors: should add doctors successfully", async () => {
+      const doctoToAdd = { name: "Doctor" };
 
-    const res = await addDoctor(api, doctoToAdd);
+      const res = await addDoctor(api, doctoToAdd);
 
-    expect(res.status).toBe(200);
+      expect(res.status).toBe(200);
 
-    const doctor = res.body.data.addDoctor as Doctor;
+      const doctor = res.body.data.addDoctor as Doctor;
 
-    expect(doctor?.id).toBeGreaterThan(0);
-  });
+      expect(doctor?.id).toBeGreaterThan(0);
+    });
 
-  it("addAvailabilities: should add availabilities successfully", async () => {
-    const doctors = await fetchDoctors(api);
+    it("addAvailabilities: should add availabilities successfully", async () => {
+      const doctors = await fetchDoctors(api);
 
-    if (doctors.body.data.doctors.length) {
-      const availablitiesToAdd = createAvailability(
-        doctors.body.data.doctors[0],
-        2
-      );
+      if (doctors.body.data.doctors.length) {
+        for await (const day of Array.from(Array(29).keys())) {
+          const availablitiesToAdd = createAvailability(
+            doctors.body.data.doctors[0],
+            2,
+            new Date(2023, 4, day + 1, 9, 0, 0),
+            new Date(2023, 4, day + 1, 15, 0, 0)
+          );
 
-      for await (const availablityToAdd of availablitiesToAdd) {
-        const res = await addAvailability(api, {
-          dayOfWeek: availablityToAdd.dayOfWeek,
-          startTimeUtc: new Date(availablityToAdd.startTimeUtc),
-          endTimeUtc: new Date(availablityToAdd.endTimeUtc),
-          doctorId: availablityToAdd.doctor.id
-        });
+          for await (const availablityToAdd of availablitiesToAdd) {
+            const res = await addAvailability(api, {
+              dayOfWeek: availablityToAdd.dayOfWeek,
+              startTimeUtc: new Date(availablityToAdd.startTimeUtc),
+              endTimeUtc: new Date(availablityToAdd.endTimeUtc),
+              doctorId: availablityToAdd.doctor.id
+            });
 
-        const availability = res.body.data.addAvailability as Availability;
+            const availability = res.body.data.addAvailability as Availability;
 
-        expect(availability?.id).toBeGreaterThan(0);
+            expect(availability?.id).toBeGreaterThan(0);
+          }
+        }
       }
-    }
+    });
   });
 
   it("should book appointment successfully", async () => {
-    const from = new Date(1, 4, 2023, 14, 0, 0);
-    const to = new Date(1, 4, 2023, 14, 15, 0);
+    const from = new Date(2023, 4, 1, 15, 0, 0);
+    const to = new Date(2023, 4, 1, 15, 15, 0);
 
     const slotsRes = await fetchSlots(api, from, to);
 
@@ -81,8 +87,8 @@ describe("Book appointment scenario", () => {
   });
 
   it("should return an empty aray of slot", async () => {
-    const from = new Date(1, 4, 2023, 14, 0, 0);
-    const to = new Date(1, 4, 2023, 14, 15, 0);
+    const from = new Date(2023, 4, 1, 15, 0, 0);
+    const to = new Date(2023, 4, 1, 15, 15, 0);
 
     const slotsRes = await fetchSlots(api, from, to);
 

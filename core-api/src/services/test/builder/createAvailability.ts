@@ -4,11 +4,9 @@ import { Doctor } from "@/entities/Doctor";
 export const createAvailability = (
   doctor: Doctor,
   dayOfWeek: number,
-  afternoon = true
+  dateMorning: Date,
+  dateAfternoon?: Date
 ): Availability[] => {
-  let dateMorning = new Date(1, 4, 2023, 8, 0, 0);
-  let dateAfternoon = new Date(1, 4, 2023, 14, 0, 0);
-
   const morningAvailabilities: Availability[] = Array.from(
     Array(16).keys()
   ).map(() => {
@@ -22,7 +20,7 @@ export const createAvailability = (
   });
 
   let afternoonAvailabilities: Availability[] = [];
-  if (afternoon) {
+  if (dateAfternoon) {
     afternoonAvailabilities = Array.from(Array(16).keys()).map(() => {
       const { availability, date } = makeAvailabilities(
         dateAfternoon,
