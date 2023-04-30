@@ -37,8 +37,13 @@ const AppointmentForm: FC<{
     reset();
   };
 
+  const handleClose = () => {
+    onClose();
+    reset();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='xl' isCentered>
+    <Modal isOpen={isOpen} onClose={handleClose} size='xl' isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Booking</ModalHeader>
@@ -50,16 +55,35 @@ const AppointmentForm: FC<{
               <FormLabel>Patient name</FormLabel>
               <Input
                 type='text'
-                {...register('patientName', { required: true, minLength: 3 })}
+                {...register('patientName', {
+                  required: {
+                    value: true,
+                    message: 'This field is required',
+                  },
+                  minLength: {
+                    value: 3,
+                    message: 'The name must be at least 3 characters long',
+                  },
+                })}
               />
-              {errors.patientName && <span>This field is required</span>}
+              {errors.patientName && <span>{errors.patientName.message}</span>}
             </FormControl>
             <FormControl mt={6}>
               <FormLabel>Description</FormLabel>
               <Textarea
-                {...register('desciption', { required: true, minLength: 3 })}
+                {...register('desciption', {
+                  required: {
+                    value: true,
+                    message: 'This field is required',
+                  },
+                  minLength: {
+                    value: 10,
+                    message:
+                      'The description must be at least 10 characters long',
+                  },
+                })}
               />
-              {errors.desciption && <span>This field is required</span>}
+              {errors.desciption && <span>{errors.desciption.message}</span>}
             </FormControl>
           </ModalBody>
 

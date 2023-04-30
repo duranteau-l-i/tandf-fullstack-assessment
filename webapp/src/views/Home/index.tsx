@@ -1,13 +1,12 @@
 import { Heading, Box } from '@chakra-ui/react';
 import Link from 'next/link';
 
+import Navigation from '@/components/Navigation';
+
 const Home = () => {
   return (
     <Box>
-      <Heading>Booker App</Heading>
-      <Link href='/items'>Items</Link>
-      <br />
-      <Link href='/appointments'>Appointments</Link>
+      <Heading>Home</Heading>
     </Box>
   );
 };
