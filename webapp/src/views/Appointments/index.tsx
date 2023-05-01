@@ -1,23 +1,32 @@
 import { useEffect, useState } from 'react';
 
-import { Heading, Box, Text } from '@chakra-ui/react';
+import { gql, useQuery } from '@apollo/client';
+import { Heading, Box, Text, useToast } from '@chakra-ui/react';
 import { addMinutes, addDays } from 'date-fns';
 
+import AppointmentForm from '@/components/AppointmentForm';
 import DoctorSelector from '@/components/DoctorSelector';
 import SlotSelector from '@/components/SlotSelector';
-import { Doctor, Slot, useDoctorsQuery } from '@/generated/core.graphql';
+import Toast from '@/components/Toast';
+import {
+  Doctor,
+  Slot,
+  useBookAppointmentMutation,
+  useDoctorsQuery,
+  useSlotsQuery,
+} from '@/generated/core.graphql';
 import { SlotWithKey } from '@/types/domain';
 
 const startDate = new Date();
-const generateSlots = (): SlotWithKey[] => {
-  return [
-    {
-      key: startDate.toString(),
-      start: startDate,
-      end: addMinutes(startDate, 15),
-      doctorId: 1,
-    },
-  ];
+const generateSlots = (slots: Slot[], doctor: Doctor): SlotWithKey[] => {
+  return slots
+    .map((slot) => ({
+      ...slot,
+      key: `${slot.start.toString()}-${slot.doctorId}`,
+      start: new Date(slot.start),
+      end: new Date(slot.end),
+    }))
+    .filter((el) => el.doctorId === doctor.id);
 };
 
 const Appointments = () => {
@@ -30,42 +39,101 @@ const Appointments = () => {
   const minimumStartDate = slots?.[0]?.start;
   const maximumStartDate = minimumStartDate && addDays(minimumStartDate, 30);
 
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  const onClose = () => setOpen(false);
+
+  const { data: slotData, refetch } = useSlotsQuery({
+    variables: {
+      from: startDate,
+      to: addDays(startDate, 30),
+    },
+  });
+  const [bookAppointment, { loading: bookLoading }] =
+    useBookAppointmentMutation();
+
+  const handleSelectSlot = (slot: SlotWithKey | undefined) => {
+    setSelectedSlot(slot);
+    if (slot) setOpen(true);
+  };
+
+  const handleBookAppointment = async (props: {
+    patientName: string;
+    desciption: string;
+  }) => {
+    if (selectedSlot) {
+      const slot = {
+        start: selectedSlot.start,
+        end: selectedSlot.end,
+        doctorId: selectedSlot.doctorId,
+      };
+
+      toast({
+        title: 'Booking created.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+
+      await bookAppointment({
+        variables: {
+          bookAppointment: {
+            patientName: props.patientName,
+            description: props.desciption,
+            slot,
+          },
+        },
+      });
+
+      await refetch();
+      if (open) onClose();
+    }
+  };
+
   useEffect(() => {
     if (selectedDoctor) {
-      // fetch availabilities
-      // generate slots
-      const slots = generateSlots();
-      setSlots(slots);
+      if (slotData) {
+        const slots = generateSlots(slotData.slots, selectedDoctor);
+        setSlots(slots);
+      }
     } else {
       setSlots([]);
     }
-  }, [selectedDoctor]);
+  }, [selectedDoctor, slotData]);
 
   return (
-    <Box>
-      <Heading>Appointments</Heading>
+    <Box mt={2} ml={3}>
       {error && (
         <Box>
           <Text>{error}</Text>
         </Box>
       )}
-      <DoctorSelector
-        doctors={data?.doctors as Doctor[]}
-        value={selectedDoctor}
-        onChange={setSelectedDoctor}
-      />
-      {slots?.length > 0 ? (
-        <SlotSelector
-          minimumStartDate={minimumStartDate}
-          maximumStartDate={maximumStartDate}
-          availableSlots={slots}
-          value={selectedSlot}
-          onChange={setSelectedSlot}
-          loadingSlots={isLoading}
+      <Box mt={2}>
+        <DoctorSelector
+          doctors={data?.doctors as Doctor[]}
+          value={selectedDoctor}
+          onChange={setSelectedDoctor}
         />
-      ) : (
-        <Text>No slots available</Text>
-      )}
+        {slots?.length > 0 ? (
+          <SlotSelector
+            minimumStartDate={minimumStartDate}
+            maximumStartDate={maximumStartDate}
+            availableSlots={slots}
+            value={selectedSlot}
+            onChange={handleSelectSlot}
+            loadingSlots={isLoading}
+          />
+        ) : (
+          <>{selectedDoctor && <Text>No slots available</Text>}</>
+        )}
+
+        <AppointmentForm
+          isOpen={open}
+          onClose={onClose}
+          handleBookAppointment={handleBookAppointment}
+        />
+      </Box>
     </Box>
   );
 };
