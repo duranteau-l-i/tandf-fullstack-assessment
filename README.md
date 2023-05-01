@@ -61,13 +61,18 @@ Read webapp/README.md for instructions on how to run the solution and how to use
 - push this to your GitHub and add sinn1 as a reviewer
 - create a PR for each task where the base is the previous task
 - update this README.MD with your total time taken
--
 
 ## Marking
 
 For candidate:
 
-- total time taken: // please fill this in
+- total time taken: It took me about a day split over several days
+
+  There are points where I lost time like the unit tests because I had to mock the typeorm repository (I created my version of unit test in last branch)
+  and also graphql which was new for me
+
+  the final branch is refactor-improvements (back and front)
+  It is necessary to run the migration then the e2e tests by having unskip first test in order to create doctors and availabilities
 
 - For reviewer
   - number of backend unit tests passing
