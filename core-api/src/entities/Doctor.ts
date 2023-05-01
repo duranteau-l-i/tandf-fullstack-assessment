@@ -1,5 +1,11 @@
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { Appointment } from "./Appointment";
 import { Availability } from "./Availability";
 
@@ -11,7 +17,7 @@ export class Doctor extends BaseEntity {
   id: number;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(() => Availability, availability => availability.doctor)
