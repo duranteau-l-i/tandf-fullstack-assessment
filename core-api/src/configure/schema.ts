@@ -2,7 +2,7 @@ import { GraphQLSchema } from "graphql";
 import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
 
-const resolvers = require("../resolvers");
+const resolvers = require("../presentation/resolvers");
 
 const schema: () => Promise<GraphQLSchema> = async () => {
   return buildSchema({

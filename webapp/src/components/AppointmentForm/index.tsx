@@ -2,6 +2,7 @@ import { FC } from 'react';
 
 import {
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -11,7 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
   Textarea,
 } from '@chakra-ui/react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -51,7 +51,7 @@ const AppointmentForm: FC<{
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
-            <FormControl>
+            <FormControl isInvalid={!!errors.patientName}>
               <FormLabel>Patient name</FormLabel>
               <Input
                 type='text'
@@ -66,9 +66,14 @@ const AppointmentForm: FC<{
                   },
                 })}
               />
-              {errors.patientName && <span>{errors.patientName.message}</span>}
+
+              {errors.patientName && (
+                <FormErrorMessage>
+                  {errors.patientName.message}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={6}>
+            <FormControl mt={6} isInvalid={!!errors.desciption}>
               <FormLabel>Description</FormLabel>
               <Textarea
                 {...register('desciption', {
@@ -83,7 +88,9 @@ const AppointmentForm: FC<{
                   },
                 })}
               />
-              {errors.desciption && <span>{errors.desciption.message}</span>}
+              {errors.desciption && (
+                <FormErrorMessage>{errors.desciption.message}</FormErrorMessage>
+              )}
             </FormControl>
           </ModalBody>
 
